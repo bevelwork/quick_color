@@ -1,6 +1,9 @@
-package quick_color
+package main
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // Version components
 const (
@@ -14,3 +17,7 @@ var (
 	DATE    = time.Now().Format("20060102")
 	Version = MAJOR + "." + MINOR + "." + DATE
 )
+
+func main() {
+	fmt.Print(Version)
+}

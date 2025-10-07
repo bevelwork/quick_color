@@ -26,19 +26,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat > print_version.go <<'EOF'
-          package main
-
-          import (
-              "fmt"
-              qc "github.com/bevelwork/quick_color"
-          )
-
-          func main() {
-              fmt.Print(qc.Version)
-          }
-          EOF
-          VERSION=$(go run ./print_version.go)
+          VERSION=$(go run version.go)
           if [[ -z "${VERSION:-}" ]]; then
             echo "Failed to compute version via Go" >&2
             exit 1
