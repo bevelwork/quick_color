@@ -23,6 +23,32 @@ func TestColorizeBold(t *testing.T) {
 	}
 }
 
+func TestApplyStyleHelpers(t *testing.T) {
+	cases := []struct{ name, got string }{
+		{"bold", Bold("x")},
+		{"italic", Italic("x")},
+		{"underline", Underline("x")},
+		{"dim", Dim("x")},
+		{"inverse", Inverse("x")},
+		{"strike", Strike("x")},
+	}
+	for _, c := range cases {
+		if c.got[len(c.got)-len(ColorReset):] != ColorReset {
+			t.Fatalf("%s: expected reset suffix", c.name)
+		}
+	}
+}
+
+func TestColorizeWithStyles(t *testing.T) {
+	got := Colorize("x", ColorGreen, ColorBold, StyleUnderline)
+	if got[:len(ColorGreen)] != ColorGreen {
+		t.Fatalf("expected color prefix")
+	}
+	if got[len(got)-len(ColorReset):] != ColorReset {
+		t.Fatalf("expected reset suffix")
+	}
+}
+
 func TestAlternatingColor(t *testing.T) {
 	if AlternatingColor(0, ColorWhite, ColorCyan) != ColorWhite {
 		t.Fatal("even index should use evenColor")
