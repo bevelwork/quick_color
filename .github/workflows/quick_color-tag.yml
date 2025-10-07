@@ -3,8 +3,6 @@ name: quick_color tag on main
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'quick_color/**'
 
 permissions:
   contents: write
@@ -21,14 +19,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: quick_color/go.mod
+          go-version-file: go.mod
 
       - name: Compute version using Go package
         id: ver
         shell: bash
         run: |
           set -euo pipefail
-          pushd quick_color >/dev/null
           cat > print_version.go <<'EOF'
 package main
 
@@ -42,7 +39,6 @@ func main() {
 }
 EOF
           VERSION=$(go run ./print_version.go)
-          popd >/dev/null
           if [[ -z "${VERSION:-}" ]]; then
             echo "Failed to compute version via Go" >&2
             exit 1
@@ -53,10 +49,10 @@ EOF
         shell: bash
         run: |
           set -euo pipefail
-          TAG="quick_color/v${{ steps.ver.outputs.version }}"
+          TAG="v${{ steps.ver.outputs.version }}"
           git fetch --tags --force
           if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
-            echo "Tag $TAG already exists. Update quick_color/version.go to a new date/version." >&2
+            echo "Tag $TAG already exists. Update version.go to a new date/version." >&2
             exit 1
           fi
 
@@ -66,10 +62,10 @@ EOF
         shell: bash
         run: |
           set -euo pipefail
-          TAG="quick_color/v${{ steps.ver.outputs.version }}"
+          TAG="v${{ steps.ver.outputs.version }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG" -m "quick_color release $TAG"
+          git tag -a "$TAG" -m "release $TAG"
           git push origin "$TAG"
 
 
