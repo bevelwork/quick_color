@@ -1,3 +1,11 @@
+## 1.1.20251007
+
+Automated tagging workflow and version bump.
+
+- Add GitHub Actions workflow to auto-create tags from `version.go` on `main`.
+- Fail CI if tag exists, prompting a version update.
+- Bump MINOR to `1` with date-based versioning.
+
 ## 1.0.20251007
 
 Initial public release with core utilities for simple, readable CLI outputs.

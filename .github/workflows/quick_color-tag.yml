@@ -1,0 +1,75 @@
+name: quick_color tag on main
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'quick_color/**'
+
+permissions:
+  contents: write
+
+jobs:
+  tag-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: quick_color/go.mod
+
+      - name: Compute version using Go package
+        id: ver
+        shell: bash
+        run: |
+          set -euo pipefail
+          pushd quick_color >/dev/null
+          cat > print_version.go <<'EOF'
+package main
+
+import (
+    "fmt"
+    qc "github.com/bevelwork/quick_color"
+)
+
+func main() {
+    fmt.Print(qc.Version)
+}
+EOF
+          VERSION=$(go run ./print_version.go)
+          popd >/dev/null
+          if [[ -z "${VERSION:-}" ]]; then
+            echo "Failed to compute version via Go" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Fail if tag already exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="quick_color/v${{ steps.ver.outputs.version }}"
+          git fetch --tags --force
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG already exists. Update quick_color/version.go to a new date/version." >&2
+            exit 1
+          fi
+
+      - name: Create and push tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="quick_color/v${{ steps.ver.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "quick_color release $TAG"
+          git push origin "$TAG"
+
+

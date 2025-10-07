@@ -6,7 +6,7 @@ import "time"
 const (
 	// MAJOR, MINOR follow major.minor.YYYYMMDD
 	MAJOR = "1"
-	MINOR = "0"
+	MINOR = "1"
 )
 
 // DATE and Version are computed at init time so DATE uses the current day.
