@@ -1,7 +1,6 @@
-package main
+package quick_color
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -9,7 +8,7 @@ import (
 const (
 	// MAJOR, MINOR follow major.minor.YYYYMMDD
 	MAJOR = "1"
-	MINOR = "1"
+	MINOR = "2"
 )
 
 // DATE and Version are computed at init time so DATE uses the current day.
@@ -17,7 +16,3 @@ var (
 	DATE    = time.Now().Format("20060102")
 	Version = MAJOR + "." + MINOR + "." + DATE
 )
-
-func main() {
-	fmt.Print(Version)
-}
